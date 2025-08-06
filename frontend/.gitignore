@@ -1,0 +1,3 @@
+# Variables d'environnement sensibles - NE PAS COMMITTER
+backend/.env
+frontend/.env.local
