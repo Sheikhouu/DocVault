@@ -1,270 +1,140 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  AlertTriangle, 
-  Clock, 
-  Calendar,
-  Eye,
-  Bell,
-  CheckCircle
-} from 'lucide-react'
-import { useReminders, useNotifications } from '@/lib/hooks/use-reminders'
-import { formatDistanceToNow } from 'date-fns'
-import { fr } from 'date-fns/locale'
+import { Clock, AlertCircle, Calendar } from 'lucide-react'
 
 interface RemindersWidgetProps {
-  onViewAll?: () => void
+  className?: string
 }
 
-export function RemindersWidget({ onViewAll }: RemindersWidgetProps) {
-  const { reminders, stats, loading, error, refreshReminders } = useReminders()
-  const { permission, requestPermission, showReminderNotification } = useNotifications()
-
-  const topPriorityReminders = reminders.slice(0, 3) // Show only top 3
-
-  const handleNotificationTest = async () => {
-    if (permission !== 'granted') {
-      const result = await requestPermission()
-      if (result !== 'granted') return
+export function RemindersWidget({ className = "" }: RemindersWidgetProps) {
+  const reminders = [
+    {
+      id: 1,
+      title: 'Renouveler le passeport',
+      daysLeft: 10,
+      priority: 'high' as const,
+      category: 'Administratif'
+    },
+    {
+      id: 2,
+      title: 'Certificat médical expiré',
+      daysLeft: 3,
+      priority: 'urgent' as const,
+      category: 'Santé'
+    },
+    {
+      id: 3,
+      title: 'Contrat d\'assurance auto',
+      daysLeft: 15,
+      priority: 'medium' as const,
+      category: 'Assurance'
+    },
+    {
+      id: 4,
+      title: 'Permis de conduire',
+      daysLeft: 25,
+      priority: 'low' as const,
+      category: 'Administratif'
     }
-    
-    if (topPriorityReminders.length > 0) {
-      showReminderNotification(topPriorityReminders[0])
-    }
-  }
+  ]
 
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency) {
-      case 'expired':
-        return 'destructive'
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
       case 'urgent':
-        return 'warning'
-      case 'warning':
-        return 'secondary'
+        return 'bg-red-100 text-red-800 border-red-200'
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-200'
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      case 'low':
+        return 'bg-green-100 text-green-800 border-green-200'
       default:
-        return 'outline'
+        return 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }
 
-  const getUrgencyIcon = (urgency: string) => {
-    switch (urgency) {
-      case 'expired':
-        return <AlertTriangle className="h-4 w-4" />
+  const getPriorityIcon = (priority: string) => {
+    switch (priority) {
       case 'urgent':
-        return <Clock className="h-4 w-4" />
-      case 'warning':
-        return <Calendar className="h-4 w-4" />
+        return <AlertCircle className="w-4 h-4 text-red-600" />
+      case 'high':
+        return <AlertCircle className="w-4 h-4 text-orange-600" />
+      case 'medium':
+        return <Clock className="w-4 h-4 text-yellow-600" />
+      case 'low':
+        return <Calendar className="w-4 h-4 text-green-600" />
       default:
-        return <CheckCircle className="h-4 w-4" />
+        return <Clock className="w-4 h-4 text-gray-600" />
     }
-  }
-
-  const getUrgencyLabel = (urgency: string) => {
-    switch (urgency) {
-      case 'expired':
-        return 'Expiré'
-      case 'urgent':
-        return 'Urgent'
-      case 'warning':
-        return 'Attention'
-      default:
-        return 'Normal'
-    }
-  }
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Rappels
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-muted rounded w-1/2"></div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Rappels
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-4">
-            <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-2" />
-            <p className="text-sm text-destructive mb-3">{error}</p>
-            <Button variant="outline" size="sm" onClick={refreshReminders}>
-              Réessayer
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    )
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
+    <section className={`space-y-6 ${className}`}>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Rappels importants
+        </h2>
+        <p className="text-gray-600">
+          Documents à renouveler ou actions à effectuer
+        </p>
+      </div>
+
+      <Card className="hover:shadow-lg transition-shadow duration-200">
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Rappels
-            {stats.total > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {stats.total}
-              </Badge>
-            )}
+            <Clock className="w-5 h-5 text-blue-600" />
+            Rappels en cours
           </CardTitle>
-          <div className="flex items-center gap-2">
-            {permission === 'default' && (
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={requestPermission}
-                className="text-xs"
-              >
-                Activer notifications
-              </Button>
-            )}
-            {topPriorityReminders.length > 0 && (
-              <Button variant="outline" size="sm" onClick={onViewAll}>
-                <Eye className="h-4 w-4 mr-1" />
-                Tout voir
-              </Button>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {stats.total === 0 ? (
-          <div className="text-center py-6">
-            <CheckCircle className="h-12 w-12 text-success mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-2">
-              Aucun rappel urgent
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Tous vos documents sont à jour !
-            </p>
-          </div>
-        ) : (
+        </CardHeader>
+        <CardContent>
           <div className="space-y-4">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              {stats.expired > 0 && (
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-destructive">
-                    {stats.expired}
+            {reminders.map((reminder) => (
+              <div 
+                key={reminder.id} 
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    {getPriorityIcon(reminder.priority)}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Expirés
-                  </div>
-                </div>
-              )}
-              {stats.urgent > 0 && (
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-warning">
-                    {stats.urgent}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Urgents
-                  </div>
-                </div>
-              )}
-              {stats.warning > 0 && (
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">
-                    {stats.warning}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    À surveiller
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Top Priority Reminders */}
-            <div className="space-y-3">
-              {topPriorityReminders.map((reminder) => (
-                <div 
-                  key={reminder.document.id}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
-                >
-                  <div className="flex-shrink-0 mt-0.5">
-                    {getUrgencyIcon(reminder.urgencyLevel)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">
-                          {reminder.document.title}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {reminder.daysUntilExpiry < 0 
-                            ? `Expiré depuis ${Math.abs(reminder.daysUntilExpiry)} jour(s)`
-                            : `Expire dans ${reminder.daysUntilExpiry} jour(s)`
-                          }
-                        </p>
-                      </div>
-                      <Badge 
-                        variant={getUrgencyColor(reminder.urgencyLevel)}
-                        className="text-xs flex-shrink-0"
-                      >
-                        {getUrgencyLabel(reminder.urgencyLevel)}
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">
+                      {reminder.title}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline" className="text-xs">
+                        {reminder.category}
                       </Badge>
+                      <span className="text-sm text-gray-500">
+                        {reminder.daysLeft} jour{reminder.daysLeft > 1 ? 's' : ''} restant{reminder.daysLeft > 1 ? 's' : ''}
+                      </span>
                     </div>
-                    {reminder.document.expiry_date && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Échéance : {new Date(reminder.document.expiry_date).toLocaleDateString('fr-FR')}
-                      </p>
-                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {reminders.length > 3 && (
-              <div className="text-center pt-2">
-                <Button variant="ghost" size="sm" onClick={onViewAll}>
-                  Voir {reminders.length - 3} rappel(s) de plus
-                </Button>
+                <div className="flex-shrink-0">
+                  <Badge 
+                    className={`text-xs ${getPriorityColor(reminder.priority)}`}
+                  >
+                    {reminder.priority === 'urgent' && 'Urgent'}
+                    {reminder.priority === 'high' && 'Important'}
+                    {reminder.priority === 'medium' && 'Moyen'}
+                    {reminder.priority === 'low' && 'Faible'}
+                  </Badge>
+                </div>
               </div>
-            )}
-
-            {/* Notification Test */}
-            {permission === 'granted' && topPriorityReminders.length > 0 && (
-              <div className="pt-2 border-t">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleNotificationTest}
-                  className="w-full text-xs"
-                >
-                  <Bell className="h-3 w-3 mr-1" />
-                  Tester notification
-                </Button>
-              </div>
-            )}
+            ))}
           </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          {reminders.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+              <p>Aucun rappel en cours</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </section>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,6 +18,7 @@ export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [redirectCountdown, setRedirectCountdown] = useState(5)
   const router = useRouter()
 
   const {
@@ -28,12 +29,26 @@ export function SignUpForm() {
     resolver: zodResolver(signUpSchema),
   })
 
+  // Compte à rebours pour la redirection automatique
+  useEffect(() => {
+    if (success && redirectCountdown > 0) {
+      const timer = setTimeout(() => {
+        setRedirectCountdown(redirectCountdown - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else if (success && redirectCountdown === 0) {
+      router.push('/dashboard')
+    }
+  }, [success, redirectCountdown, router])
+
   const onSubmit = async (data: SignUpInput) => {
     setIsLoading(true)
     setError(null)
 
     try {
       const supabase = createClient()
+      
+      console.log('🚀 Début de l\'inscription...', { email: data.email, fullName: data.fullName })
       
       // Inscription de l'utilisateur avec Supabase
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
@@ -47,10 +62,13 @@ export function SignUpForm() {
       })
 
       if (signUpError) {
+        console.error('❌ Erreur Supabase signUp:', signUpError)
         throw new Error(signUpError.message)
       }
 
       if (authData.user) {
+        console.log('✅ Utilisateur créé avec succès:', authData.user.id)
+        
         // Créer le profil utilisateur avec la fonction utilitaire
         const profileResult = await createUserProfile(
           authData.user.id,
@@ -59,14 +77,19 @@ export function SignUpForm() {
         )
 
         if (!profileResult.success) {
-          console.warn('Erreur création profil:', profileResult.error)
+          console.warn('⚠️ Erreur création profil:', profileResult.error)
           // On ne bloque pas l'inscription, le profil peut être créé plus tard
+        } else {
+          console.log('✅ Profil utilisateur créé avec succès')
         }
 
         setSuccess(true)
+        console.log('🎉 Inscription terminée avec succès!')
+      } else {
+        throw new Error('Aucun utilisateur créé')
       }
     } catch (err) {
-      console.error('Erreur d\'inscription:', err)
+      console.error('❌ Erreur d\'inscription:', err)
       if (err instanceof Error) {
         if (err.message.includes('User already registered')) {
           setError('Un compte existe déjà avec cette adresse email')
@@ -76,8 +99,10 @@ export function SignUpForm() {
           setError('Les inscriptions sont temporairement désactivées')
         } else if (err.message.includes('Invalid email')) {
           setError('L\'adresse email n\'est pas valide')
+        } else if (err.message.includes('Unable to validate email address')) {
+          setError('Impossible de valider l\'adresse email. Vérifiez le format.')
         } else {
-          setError('Erreur lors de la création du compte. Veuillez réessayer.')
+          setError(`Erreur lors de la création du compte: ${err.message}`)
         }
       } else {
         setError('Erreur lors de la création du compte. Veuillez réessayer.')
@@ -96,9 +121,9 @@ export function SignUpForm() {
               <span className="text-3xl">✅</span>
             </div>
             <div className="space-y-2">
-              <CardTitle className="text-2xl font-bold text-success">Compte créé !</CardTitle>
+              <CardTitle className="text-2xl font-bold text-success">Compte créé avec succès !</CardTitle>
               <CardDescription className="text-muted-foreground">
-                Vérifiez votre email pour confirmer votre compte
+                Redirection vers le dashboard dans {redirectCountdown} secondes...
               </CardDescription>
             </div>
           </div>
@@ -121,15 +146,18 @@ export function SignUpForm() {
             </div>
             
             <div className="space-y-3">
-              <Button asChild variant="gradient" className="w-full h-11">
+              <Button 
+                onClick={() => router.push('/dashboard')}
+                variant="gradient" 
+                className="w-full h-11"
+              >
+                <span className="mr-2">🚀</span>
+                Aller au dashboard maintenant
+              </Button>
+              <Button asChild variant="outline" className="w-full">
                 <Link href="/signin">
                   <span className="mr-2">←</span>
                   Retour à la connexion
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/">
-                  Retour à l'accueil
                 </Link>
               </Button>
             </div>
@@ -272,7 +300,7 @@ export function SignUpForm() {
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                Création...
+                Création en cours...
               </>
             ) : (
               <>

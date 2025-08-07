@@ -10,7 +10,8 @@ import {
   Settings, 
   ChevronUp,
   ChevronDown,
-  Upload
+  Upload,
+  Bell
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -37,6 +38,12 @@ export function Sidebar() {
       label: 'Dossiers',
       icon: Folder,
       active: pathname.startsWith('/documents')
+    },
+    {
+      href: '/dashboard/reminders',
+      label: 'Rappels',
+      icon: Bell,
+      active: pathname.startsWith('/dashboard/reminders')
     },
     {
       href: '/settings',

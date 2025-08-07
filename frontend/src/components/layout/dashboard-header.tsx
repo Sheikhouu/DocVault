@@ -1,128 +1,131 @@
 'use client'
 
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { 
   Search, 
-  UserPlus, 
-  Grid3X3, 
-  Monitor, 
-  HelpCircle, 
-  Bell,
-  Settings,
+  Bell, 
+  Settings, 
+  User,
+  ChevronDown,
   LogOut
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 
 interface DashboardHeaderProps {
-  title?: string
-  subtitle?: string
+  userName: string
+  userEmail: string
+  onLogout: () => void
+  onSearch: () => void
+  onNotifications: () => void
+  onSettings: () => void
 }
 
-export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showUserMenu, setShowUserMenu] = useState(false)
-  const router = useRouter()
-  const supabase = createClient()
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/signin')
-  }
+export function DashboardHeader({ 
+  userName, 
+  userEmail, 
+  onLogout, 
+  onSearch, 
+  onNotifications, 
+  onSettings 
+}: DashboardHeaderProps) {
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
   return (
-    <div>
-      <header className="bg-card border-b border-border p-4">
-        <div className="flex items-center justify-between">
-          {/* Search */}
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input 
-                placeholder="Rechercher" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
+    <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="flex items-center justify-between">
+        {/* Left side - Search */}
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSearch}
+            className="hidden sm:flex items-center space-x-2"
+          >
+            <Search className="w-4 h-4" />
+            <span>Rechercher...</span>
+          </Button>
+        </div>
 
-          {/* Header Actions */}
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <UserPlus className="w-4 h-4 mr-2" />
-              Inviter
+        {/* Right side - Actions and user menu */}
+        <div className="flex items-center space-x-4">
+          {/* Action buttons */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onNotifications}
+            className="relative"
+          >
+            <Bell className="w-5 h-5" />
+            <span className="sr-only">Notifications</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onSettings}
+          >
+            <Settings className="w-5 h-5" />
+            <span className="sr-only">Paramètres</span>
+          </Button>
+
+          {/* User menu */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className="flex items-center space-x-2"
+            >
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-blue-600" />
+              </div>
+              <div className="hidden sm:block text-left">
+                <p className="text-sm font-medium text-gray-900">{userName}</p>
+                <p className="text-xs text-gray-500">{userEmail}</p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-gray-400" />
             </Button>
-            <Button variant="ghost" size="sm">
-              <Grid3X3 className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Monitor className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <HelpCircle className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                5
-              </span>
-            </Button>
-            
-            {/* User Menu */}
-            <div className="relative">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium text-sm">
-                  FP
+
+            {/* Dropdown menu */}
+            {isUserMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                <div className="px-4 py-2 border-b border-gray-100">
+                  <p className="text-sm font-medium text-gray-900">{userName}</p>
+                  <p className="text-xs text-gray-500">{userEmail}</p>
                 </div>
-              </Button>
-              
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-lg shadow-lg z-50">
-                  <div className="py-1">
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start"
-                      onClick={() => router.push('/settings')}
-                    >
-                      <Settings className="w-4 h-4 mr-2" />
-                      Paramètres
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start text-destructive hover:text-destructive"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Se déconnecter
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <Button variant="gradient" size="sm">
-              Upgrade Pro
-            </Button>
+                <Button
+                  variant="ghost"
+                  onClick={onSettings}
+                  className="w-full justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Paramètres
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={onLogout}
+                  className="w-full justify-start px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Déconnexion
+                </Button>
+              </div>
+            )}
           </div>
         </div>
-      </header>
-      
-      {/* Page Title Section */}
-      {(title || subtitle) && (
-        <div className="bg-muted/50 border-b px-4 py-6">
-          <div className="max-w-7xl mx-auto">
-            {title && <h1 className="text-2xl font-bold">{title}</h1>}
-            {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
+
+      {/* Mobile search bar */}
+      <div className="mt-4 sm:hidden">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onSearch}
+          className="w-full justify-start"
+        >
+          <Search className="w-4 h-4 mr-2" />
+          Rechercher...
+        </Button>
+      </div>
+    </header>
   )
 }
