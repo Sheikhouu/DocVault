@@ -18,7 +18,8 @@ import {
   HelpCircle,
   Sun,
   Moon,
-  FolderOpen
+  FolderOpen,
+  Globe
 } from 'lucide-react'
 
 export function Header() {
@@ -27,6 +28,7 @@ export function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [currentLanguage, setCurrentLanguage] = useState('fr')
 
   // Simuler si l'utilisateur est connecté (à remplacer par vraie logique auth)
   const isLoggedIn = false
@@ -47,6 +49,17 @@ export function Header() {
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode)
     document.documentElement.classList.toggle('dark')
+  }
+
+  const toggleLanguage = () => {
+    const newLang = currentLanguage === 'fr' ? 'en' : 'fr'
+    setCurrentLanguage(newLang)
+    // Ici on intégrerait la vraie logique de changement de langue
+    console.log('Language changed to:', newLang)
+  }
+
+  const getLanguageText = () => {
+    return currentLanguage === 'fr' ? 'English' : 'Français'
   }
 
   const handleSearch = (e: React.FormEvent) => {
@@ -242,6 +255,17 @@ export function Header() {
                 >
                   {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                   {isDarkMode ? 'Mode Clair' : 'Mode Sombre'}
+                </button>
+                
+                <button 
+                  onClick={toggleLanguage}
+                  className="flex items-center gap-3 px-4 py-2 rounded hover:bg-muted w-full text-left"
+                >
+                  <Globe className="w-5 h-5" />
+                  <span>{getLanguageText()}</span>
+                  <span className="ml-auto text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                    {currentLanguage.toUpperCase()}
+                  </span>
                 </button>
                 
                 <Link href="/help" className="flex items-center gap-3 px-4 py-2 rounded hover:bg-muted">
