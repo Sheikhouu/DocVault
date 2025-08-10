@@ -60,8 +60,8 @@ const colorClasses = {
 
 export function FeaturesSection() {
   return (
-    <section className="py-24 bg-muted/30">
-      <div className="container mx-auto px-4">
+    <section className="py-24">
+      <div className="px-4">
         <div className="text-center mb-16 animate-fade-in">
           <Badge variant="outline" className="mb-4">
             ✨ Fonctionnalités

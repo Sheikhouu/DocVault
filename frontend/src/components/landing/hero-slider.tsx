@@ -107,7 +107,7 @@ export function HeroSlider() {
         
         {/* Content */}
         <div className="relative z-10 h-full flex items-center">
-          <div className="w-full px-2">
+          <div className="max-w-6xl mx-auto w-full px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
               {/* Texte à gauche */}

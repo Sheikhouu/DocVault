@@ -16,12 +16,12 @@ export function LandingPage() {
       <Header />
       
       {/* Hero Slider - 20cm juste après la navbar */}
-      <div className="mt-16">
+      <div className="mt-16 max-w-7xl mx-auto">
         <HeroSlider />
       </div>
       
       {/* Hero Section - avec espacement pour header + slider */}
-      <div className="container mx-auto px-4 pt-16 pb-16">
+      <div className="max-w-7xl mx-auto px-4 pt-16 pb-16">
         <div className="text-center space-y-8 max-w-4xl mx-auto">
           {/* Title & Description */}
           <div className="space-y-6">
@@ -91,7 +91,7 @@ export function LandingPage() {
 
       {/* Section Version Pro avec tableau comparatif */}
       <div className="bg-gradient-to-br from-primary/5 to-accent/5 py-16">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Header Section Pro */}
             <div className="text-center mb-12">
@@ -269,11 +269,13 @@ export function LandingPage() {
 
       {/* Features Section */}
       <div className="bg-muted/30 py-16">
-        <FeaturesSection />
+        <div className="max-w-7xl mx-auto">
+          <FeaturesSection />
+        </div>
       </div>
 
       {/* CTA Final */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center space-y-6 max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold">Prêt à sécuriser vos documents ?</h2>
           <p className="text-lg text-muted-foreground">
