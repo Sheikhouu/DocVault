@@ -4,96 +4,140 @@
 
 @layer base {
   :root {
-    /* DocVault Brand Colors */
-    --brand-primary: 212 100% 45%;     /* #0066ff - Blue principal */
-    --brand-secondary: 142 76% 36%;    /* #16a34a - Green accent */
-    --brand-accent: 268 83% 58%;       /* #8b5cf6 - Purple accent */
+    /* ===== DOCVAULT COLOR SYSTEM - MODE CLAIR ===== */
     
-    /* Neutral Palette */
-    --neutral-50: 210 20% 98%;         /* #f8fafc */
-    --neutral-100: 214 15% 91%;        /* #e2e8f0 */
-    --neutral-200: 213 13% 83%;        /* #cbd5e1 */
-    --neutral-300: 212 12% 70%;        /* #94a3b8 */
-    --neutral-400: 213 9% 56%;         /* #64748b */
-    --neutral-500: 215 8% 47%;         /* #475569 */
-    --neutral-600: 215 14% 34%;        /* #334155 */
-    --neutral-700: 215 19% 27%;        /* #1e293b */
-    --neutral-800: 217 33% 17%;        /* #0f172a */
-    --neutral-900: 222 84% 5%;         /* #020617 */
+    /* Palette Bleue Principale */
+    --blue-50: 214 100% 97%;          /* #eff6ff - Bleu très clair */
+    --blue-100: 214 95% 93%;          /* #dbeafe - Bleu clair */
+    --blue-200: 214 86% 83%;          /* #bfdbfe - Bleu léger */
+    --blue-300: 213 78% 70%;          /* #93c5fd - Bleu moyen */
+    --blue-400: 213 94% 68%;          /* #60a5fa - Bleu vif */
+    --blue-500: 217 91% 60%;          /* #3b82f6 - Bleu principal */
+    --blue-600: 221 83% 53%;          /* #2563eb - Bleu foncé */
+    --blue-700: 224 76% 48%;          /* #1d4ed8 - Bleu très foncé */
+    --blue-800: 226 71% 40%;          /* #1e40af - Bleu profond */
+    --blue-900: 224 64% 33%;          /* #1e3a8a - Bleu nuit */
 
-    /* Light Theme Variables */
-    --background: var(--neutral-50);
-    --foreground: var(--neutral-900);
+    /* Nuances de Blanc et Gris */
+    --white: 0 0% 100%;               /* #ffffff - Blanc pur */
+    --gray-50: 210 20% 98%;           /* #f8fafc - Blanc cassé */
+    --gray-100: 214 15% 91%;          /* #e2e8f0 - Gris très clair */
+    --gray-200: 213 13% 83%;          /* #cbd5e1 - Gris clair */
+    --gray-300: 212 12% 70%;          /* #94a3b8 - Gris moyen */
+    --gray-400: 213 9% 56%;           /* #64748b - Gris */
+    --gray-500: 215 8% 47%;           /* #475569 - Gris foncé */
+    --gray-600: 215 14% 34%;          /* #334155 - Gris très foncé */
+    --gray-700: 215 19% 27%;          /* #1e293b - Presque noir */
+    --gray-800: 217 33% 17%;          /* #0f172a - Noir bleuté */
+    --gray-900: 222 84% 5%;           /* #020617 - Noir profond */
 
-    --card: 0 0% 100%;
-    --card-foreground: var(--neutral-900);
+    /* Couleurs de Statut */
+    --green-500: 142 76% 36%;         /* #16a34a - Succès */
+    --red-500: 0 84% 60%;             /* #ef4444 - Erreur */
+    --orange-500: 25 95% 53%;         /* #f97316 - Avertissement */
+    --purple-500: 262 83% 58%;        /* #8b5cf6 - Accent */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: var(--neutral-900);
+    /* ===== VARIABLES SÉMANTIQUES - MODE CLAIR ===== */
+    
+    /* Arrière-plans */
+    --background: var(--white);               /* Fond principal blanc */
+    --background-secondary: var(--gray-50);   /* Fond secondaire */
+    --foreground: var(--gray-900);            /* Texte principal */
+    --foreground-muted: var(--gray-600);     /* Texte secondaire */
 
-    --primary: var(--brand-primary);
-    --primary-foreground: 0 0% 100%;
+    /* Composants */
+    --card: var(--white);
+    --card-foreground: var(--gray-900);
 
-    --secondary: var(--neutral-100);
-    --secondary-foreground: var(--neutral-900);
+    --popover: var(--white);
+    --popover-foreground: var(--gray-900);
 
-    --muted: var(--neutral-100);
-    --muted-foreground: var(--neutral-500);
+    /* Bleu principal pour les actions importantes */
+    --primary: var(--blue-600);              /* #2563eb - Bleu DocVault */
+    --primary-hover: var(--blue-700);        /* État hover */
+    --primary-foreground: var(--white);
 
-    --accent: var(--brand-accent);
-    --accent-foreground: 0 0% 100%;
+    /* Éléments secondaires en gris clair */
+    --secondary: var(--gray-100);
+    --secondary-hover: var(--gray-200);
+    --secondary-foreground: var(--gray-900);
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    /* Zones atténuées */
+    --muted: var(--gray-100);
+    --muted-foreground: var(--gray-500);
 
-    --success: var(--brand-secondary);
-    --success-foreground: 0 0% 100%;
+    /* Accent violet pour les highlights */
+    --accent: var(--purple-500);
+    --accent-foreground: var(--white);
 
-    --warning: 43 96% 56%;
-    --warning-foreground: var(--neutral-900);
+    /* États de statut */
+    --destructive: var(--red-500);
+    --destructive-foreground: var(--white);
 
-    --border: var(--neutral-200);
-    --input: var(--neutral-200);
-    --ring: var(--brand-primary);
+    --success: var(--green-500);
+    --success-foreground: var(--white);
+
+    --warning: var(--orange-500);
+    --warning-foreground: var(--white);
+
+    /* Bordures et inputs */
+    --border: var(--gray-200);
+    --border-muted: var(--gray-100);
+    --input: var(--gray-200);
+    --ring: var(--blue-600);
 
     --radius: 0.75rem;
   }
 
   .dark {
-    /* Dark Theme Variables */
-    --background: var(--neutral-900);
-    --foreground: var(--neutral-50);
+    /* ===== DOCVAULT COLOR SYSTEM - MODE SOMBRE ===== */
+    
+    /* Arrière-plans sombres avec teintes bleues */
+    --background: var(--gray-900);               /* #020617 - Fond principal noir */
+    --background-secondary: var(--gray-800);     /* #0f172a - Fond secondaire */
+    --foreground: var(--gray-50);               /* #f8fafc - Texte principal blanc */
+    --foreground-muted: var(--gray-400);        /* #64748b - Texte secondaire */
 
-    --card: var(--neutral-800);
-    --card-foreground: var(--neutral-50);
+    /* Composants avec fond sombre */
+    --card: var(--gray-800);                    /* #0f172a - Cartes sombres */
+    --card-foreground: var(--gray-50);
 
-    --popover: var(--neutral-800);
-    --popover-foreground: var(--neutral-50);
+    --popover: var(--gray-800);
+    --popover-foreground: var(--gray-50);
 
-    --primary: var(--brand-primary);
-    --primary-foreground: 0 0% 100%;
+    /* Bleu plus vif pour le mode sombre */
+    --primary: var(--blue-500);                 /* #3b82f6 - Bleu plus lumineux */
+    --primary-hover: var(--blue-400);           /* État hover plus clair */
+    --primary-foreground: var(--white);
 
-    --secondary: var(--neutral-700);
-    --secondary-foreground: var(--neutral-50);
+    /* Éléments secondaires en gris foncé */
+    --secondary: var(--gray-700);               /* #1e293b - Gris foncé */
+    --secondary-hover: var(--gray-600);
+    --secondary-foreground: var(--gray-100);
 
-    --muted: var(--neutral-700);
-    --muted-foreground: var(--neutral-400);
+    /* Zones atténuées sombres */
+    --muted: var(--gray-700);                   /* #1e293b */
+    --muted-foreground: var(--gray-400);        /* #64748b */
 
-    --accent: var(--brand-accent);
-    --accent-foreground: 0 0% 100%;
+    /* Accent violet maintenu */
+    --accent: var(--purple-500);                /* #8b5cf6 - Violet accent */
+    --accent-foreground: var(--white);
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: var(--neutral-50);
+    /* États de statut adaptés au sombre */
+    --destructive: var(--red-500);              /* Rouge maintenu */
+    --destructive-foreground: var(--white);
 
-    --success: var(--brand-secondary);
-    --success-foreground: 0 0% 100%;
+    --success: var(--green-500);                /* Vert maintenu */
+    --success-foreground: var(--white);
 
-    --warning: 43 96% 56%;
-    --warning-foreground: var(--neutral-900);
+    --warning: var(--orange-500);               /* Orange maintenu */
+    --warning-foreground: var(--gray-900);
 
-    --border: var(--neutral-700);
-    --input: var(--neutral-700);
-    --ring: var(--brand-primary);
+    /* Bordures et inputs sombres */
+    --border: var(--gray-700);                  /* #1e293b - Bordures sombres */
+    --border-muted: var(--gray-800);
+    --input: var(--gray-700);                   /* Inputs sombres */
+    --ring: var(--blue-500);                    /* Focus bleu lumineux */
   }
 }
 
@@ -108,14 +152,42 @@
 }
 
 @layer utilities {
-  /* Brand gradient utilities */
+  /* ===== DOCVAULT GRADIENT UTILITIES ===== */
+  
+  /* Gradient principal bleu DocVault */
   .bg-gradient-brand {
-    background: linear-gradient(135deg, hsl(var(--brand-primary)) 0%, hsl(var(--brand-accent)) 100%);
+    background: linear-gradient(135deg, hsl(var(--blue-600)) 0%, hsl(var(--blue-500)) 50%, hsl(var(--blue-400)) 100%);
   }
   
-  .bg-gradient-secondary {
-    background: linear-gradient(135deg, hsl(var(--brand-secondary)) 0%, hsl(var(--brand-primary)) 100%);
+  /* Gradient bleu vers violet pour les accents */
+  .bg-gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--blue-500)) 0%, hsl(var(--purple-500)) 100%);
   }
+  
+  /* Gradient subtil pour les arrière-plans */
+  .bg-gradient-subtle {
+    background: linear-gradient(135deg, hsl(var(--gray-50)) 0%, hsl(var(--white)) 100%);
+  }
+  
+  .dark .bg-gradient-subtle {
+    background: linear-gradient(135deg, hsl(var(--gray-900)) 0%, hsl(var(--gray-800)) 100%);
+  }
+
+  /* ===== CLASSES DE COULEURS UTILITAIRES ===== */
+  
+  /* Backgrounds avec variables sémantiques */
+  .bg-primary-soft { background-color: hsl(var(--blue-50)); }
+  .dark .bg-primary-soft { background-color: hsl(var(--blue-900) / 0.3); }
+  
+  .bg-secondary-soft { background-color: hsl(var(--gray-50)); }
+  .dark .bg-secondary-soft { background-color: hsl(var(--gray-800)); }
+  
+  /* Textes avec couleurs sémantiques */
+  .text-primary-soft { color: hsl(var(--blue-600)); }
+  .dark .text-primary-soft { color: hsl(var(--blue-400)); }
+  
+  .text-muted-soft { color: hsl(var(--gray-500)); }
+  .dark .text-muted-soft { color: hsl(var(--gray-400)); }
 
   /* Glass morphism effect */
   .glass {

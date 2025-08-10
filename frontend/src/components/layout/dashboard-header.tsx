@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -58,9 +59,7 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
             <Button variant="ghost" size="sm">
               <Grid3X3 className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="sm">
-              <Monitor className="w-4 h-4" />
-            </Button>
+            <ThemeToggle />
             <Button variant="ghost" size="sm">
               <HelpCircle className="w-4 h-4" />
             </Button>

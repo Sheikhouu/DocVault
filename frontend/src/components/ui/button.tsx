@@ -5,19 +5,38 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] hover-lift",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg",
-        destructive: "bg-destructive text-destructive-foreground shadow-md hover:bg-destructive/90 hover:shadow-lg",
-        success: "bg-success text-success-foreground shadow-md hover:bg-success/90 hover:shadow-lg",
-        warning: "bg-warning text-warning-foreground shadow-md hover:bg-warning/90 hover:shadow-lg",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-accent/50",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        gradient: "bg-gradient-brand text-white shadow-brand hover:shadow-brand-lg hover:scale-[1.02]",
+        // Primary - Bleu DocVault principal
+        default: "bg-primary text-primary-foreground shadow-md hover:bg-primary-hover hover:shadow-lg transform-gpu",
+        primary: "bg-primary text-primary-foreground shadow-md hover:bg-primary-hover hover:shadow-lg transform-gpu",
+        
+        // Secondary - Gris élégant
+        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary-hover hover:shadow-md border border-border/50",
+        
+        // Outline - Bordure avec effet hover
+        outline: "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground hover:shadow-md transition-all duration-200",
+        
+        // Ghost - Minimal avec hover subtil
+        ghost: "text-foreground hover:bg-primary-soft hover:text-primary-soft transition-all duration-200",
+        
+        // Accent - Violet vibrant
+        accent: "bg-accent text-accent-foreground shadow-md hover:bg-accent/90 hover:shadow-lg",
+        
+        // Link - Style texte
+        link: "text-primary underline-offset-4 hover:underline hover:text-primary-hover font-normal",
+        
+        // États de statut avec nouvelles couleurs
+        destructive: "bg-destructive text-destructive-foreground shadow-md hover:bg-red-600 hover:shadow-lg",
+        success: "bg-success text-success-foreground shadow-md hover:bg-green-600 hover:shadow-lg",
+        warning: "bg-warning text-warning-foreground shadow-md hover:bg-orange-600 hover:shadow-lg",
+        
+        // Gradients DocVault
+        gradient: "bg-gradient-brand text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transform-gpu",
+        "gradient-accent": "bg-gradient-accent text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transform-gpu",
+        "gradient-subtle": "bg-gradient-subtle text-foreground border border-border hover:shadow-md",
       },
       size: {
         default: "h-10 px-4 py-2",
