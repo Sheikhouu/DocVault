@@ -28,13 +28,13 @@ DocVault/
 
 ## 🚀 Installation & Démarrage
 
-### 1. Backend (Port 5000)
+### 1. Backend (Port 8000)
 
 ```bash
 cd backend
 npm install
 cp .env.example .env
-# Configurez les variables d'environnement
+# Configurez les variables d'environnement dans backend/.env
 npm run dev
 ```
 
@@ -43,8 +43,8 @@ npm run dev
 ```bash
 cd frontend
 npm install
-cp .env.example .env.local
-# Configurez les variables d'environnement
+cp .env.local.example .env.local
+# Configurez les variables d'environnement dans frontend/.env.local
 npm run dev
 ```
 
@@ -55,7 +55,7 @@ npm run dev
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-PORT=5000
+PORT=8000
 NODE_ENV=development
 JWT_SECRET=your_jwt_secret_here
 ENCRYPTION_KEY=your_encryption_key_for_documents
@@ -64,9 +64,12 @@ FRONTEND_URL=http://localhost:3000
 
 **Frontend (.env.local) :**
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXTAUTH_SECRET=your_nextauth_secret_here
+ENCRYPTION_KEY=your_encryption_key_for_documents
 ```
 
 ## 🔧 Stack Technique
@@ -74,7 +77,7 @@ NEXTAUTH_SECRET=your_nextauth_secret_here
 ### Backend
 - **Framework** : Express.js
 - **Base de données** : Supabase (PostgreSQL)
-- **Authentification** : Supabase Auth + JWT
+- **Authentification** : Supabase Auth (MVP - JWT simplifié)
 - **Upload fichiers** : Multer + Supabase Storage
 - **Validation** : Zod
 - **Sécurité** : Helmet, CORS
@@ -84,8 +87,9 @@ NEXTAUTH_SECRET=your_nextauth_secret_here
 - **Language** : TypeScript
 - **Styling** : Tailwind CSS
 - **UI Components** : shadcn/ui
-- **HTTP Client** : Axios
+- **Client Supabase** : @supabase/supabase-js
 - **Form Validation** : React Hook Form + Zod
+- **MVP Features** : Auth basique, Upload simple, CRUD documents
 
 ## 📡 API Routes
 
@@ -109,13 +113,13 @@ NEXTAUTH_SECRET=your_nextauth_secret_here
 - `PUT /api/profiles` - Mise à jour du profil
 - `GET /api/profiles/stats` - Statistiques utilisateur
 
-## 🔐 Authentification
+## 🔐 Authentification (MVP Simplifié)
 
-L'authentification utilise un système hybride :
-1. **Supabase Auth** côté backend pour la gestion des utilisateurs
-2. **JWT tokens** stockés côté client (localStorage)
-3. **Middleware Express** pour protéger les routes API
-4. **Middleware Next.js** pour protéger les pages frontend
+L'authentification utilise un système simplifié pour le MVP :
+1. **Supabase Auth** côté backend pour la validation des utilisateurs
+2. **Access tokens** Supabase côté client
+3. **Middleware Express** simplifié (Supabase uniquement)
+4. **Middleware Next.js** désactivé pour MVP (garde côté client)
 
 ## 📦 Scripts Disponibles
 
@@ -135,26 +139,28 @@ npm run lint     # Linting ESLint
 npm run type-check # Vérification TypeScript
 ```
 
-## 🚦 État du Projet
+## 🚦 État du Projet (MVP)
 
-✅ **Complété :**
-- Architecture backend/frontend séparée
-- API Express.js complète
-- Authentification Supabase + JWT
-- Interface Next.js adaptée
-- Services API (axios)
-- Middleware de protection
-- Documentation
+✅ **MVP Complété :**
+- Architecture backend/frontend nettoyée
+- Auth middleware backend simplifié (Supabase uniquement)
+- Frontend middleware désactivé pour MVP
+- Suppression des fonctionnalités non-MVP (sharing, notifications, reminders)
+- Chiffrement simplifié (base64 encoding pour MVP)
+- TypeScript errors corrigées
+- Build et lint qui passent
+- Documentation mise à jour
 
-🔄 **En cours :**
-- Tests de communication backend/frontend
-- Finalisation des composants adaptés
+🔄 **MVP En cours :**
+- Tests de fonctionnement e2e (signup → upload → list → delete)
 
-⏳ **À venir :**
+⏳ **Post-MVP :**
+- Vraie encryption côté client
+- Partage de documents public
+- Notifications et rappels
+- Statistiques avancées
 - Tests automatisés
-- CI/CD
-- Déploiement Docker
-- Monitoring et logs
+- CI/CD et déploiement
 
 ## 🛠 Développement
 

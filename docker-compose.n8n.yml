@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: docvault-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      # Authentication
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=docvault2024!
+      
+      # Encryption
+      - N8N_ENCRYPTION_KEY=VerySecureEncryptionKey2024ForDocVaultN8N
+      
+      # URLs and networking
+      - WEBHOOK_URL=http://localhost:5678
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      
+      # Logging and monitoring
+      - N8N_METRICS=true
+      - N8N_LOG_LEVEL=info
+      - N8N_LOG_OUTPUT=console
+      
+      # Execution settings
+      - EXECUTIONS_TIMEOUT=300
+      - EXECUTIONS_TIMEOUT_MAX=600
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      
+      # Security
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - N8N_ENFORCE_SETTINGS_FILE=false
+      
+      # Database (utilise SQLite par défaut, peut être changé pour PostgreSQL)
+      - DB_TYPE=sqlite
+      - DB_SQLITE_DATABASE=/home/node/.n8n/database.sqlite
+      
+      # Timezone
+      - TZ=Europe/Paris
+      
+    volumes:
+      # Persist n8n data
+      - n8n_data:/home/node/.n8n
+      # Mount Docker socket for container management (si nécessaire)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Mount temp directory for file processing
+      - n8n_temp:/tmp/n8n
+      
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Service optionnel pour LibreOffice conversion
+  libreoffice-converter:
+    image: linuxserver/libreoffice:latest
+    container_name: docvault-libreoffice
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    volumes:
+      - n8n_temp:/tmp/conversion
+    restart: unless-stopped
+    profiles:
+      - libreoffice
+
+volumes:
+  n8n_data:
+    driver: local
+  n8n_temp:
+    driver: local
+
+networks:
+  default:
+    name: docvault-n8n-network

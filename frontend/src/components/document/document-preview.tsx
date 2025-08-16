@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
-import { DocumentShare } from './document-share'
+// MVP: Sharing removed
 import { X, Download, Trash2, Edit, Eye, Share2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -45,10 +45,7 @@ export function DocumentPreview({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showShare, setShowShare] = useState(false)
   
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClient()
 
   useEffect(() => {
     if (open && document.file_path) {
@@ -112,20 +109,18 @@ export function DocumentPreview({
     onOpenChange(false)
   }
 
-  const isExpired = (expiryDate: string | null) => {
-    if (!expiryDate) return false
-    const expiry = new Date(expiryDate)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return expiry < today
-  }
-
-  const isExpiringSoon = (expiryDate: string | null) => {
-    if (!expiryDate) return false
-    const expiry = new Date(expiryDate)
-    const thirtyDaysFromNow = new Date()
-    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
-    return expiry <= thirtyDaysFromNow && !isExpired(expiryDate)
+  const downloadPdf = async () => {
+    if (!document.converted_pdf_url) return
+    
+    try {
+      const { data } = supabase.storage
+        .from('documents')
+        .getPublicUrl(document.converted_pdf_url)
+      
+      window.open(data.publicUrl, '_blank')
+    } catch (error) {
+      console.error('Erreur lors du téléchargement PDF:', error)
+    }
   }
 
   if (!open) return null
@@ -143,20 +138,18 @@ export function DocumentPreview({
               </p>
             </div>
             
-            {/* Status Badges */}
+            {/* Conversion Status */}
             <div className="flex gap-2">
-              {document.expiry_date && (
-                <>
-                  {isExpired(document.expiry_date) ? (
-                    <Badge variant="destructive">Expiré</Badge>
-                  ) : isExpiringSoon(document.expiry_date) ? (
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                      Expire bientôt
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline">Valide</Badge>
-                  )}
-                </>
+              {document.conversion_status && (
+                <Badge 
+                  variant={document.conversion_status === 'completed' ? 'default' : 
+                          document.conversion_status === 'failed' ? 'destructive' : 'secondary'}
+                >
+                  {document.conversion_status === 'pending' ? 'En attente' :
+                   document.conversion_status === 'converting' ? 'Conversion...' :
+                   document.conversion_status === 'completed' ? 'PDF disponible' :
+                   document.conversion_status === 'failed' ? 'Échec conversion' : 'Inconnu'}
+                </Badge>
               )}
             </div>
           </div>
@@ -221,10 +214,10 @@ export function DocumentPreview({
                       : 'Date inconnue'
                     }
                   </div>
-                  {document.expiry_date && (
+                  {document.converted_at && (
                     <div>
-                      <span className="font-medium">Expire:</span>{' '}
-                      {new Date(document.expiry_date).toLocaleDateString('fr-FR')}
+                      <span className="font-medium">Converti:</span>{' '}
+                      {new Date(document.converted_at).toLocaleDateString('fr-FR')}
                     </div>
                   )}
                 </div>
@@ -239,8 +232,20 @@ export function DocumentPreview({
                   className="w-full justify-start"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Télécharger
+                  Télécharger Original
                 </Button>
+                
+                {document.conversion_status === 'completed' && document.converted_pdf_url && (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={downloadPdf}
+                    className="w-full justify-start bg-red-600 hover:bg-red-700"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Télécharger PDF
+                  </Button>
+                )}
                 
                 <Button
                   variant="outline"
@@ -359,12 +364,7 @@ export function DocumentPreview({
         </div>
       )}
 
-      {/* Share Modal */}
-      <DocumentShare
-        document={document}
-        open={showShare}
-        onOpenChange={setShowShare}
-      />
+      {/* MVP: Share Modal removed */}
     </div>
   )
 }

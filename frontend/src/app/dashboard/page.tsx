@@ -4,9 +4,9 @@ import { useState, lazy, Suspense } from 'react'
 import { Sidebar } from '@/components/layout/sidebar'
 import { MobileSidebar } from '@/components/layout/mobile-sidebar'
 import { DashboardHeader } from '@/components/layout/dashboard-header'
-import { StatsOverview } from '@/components/dashboard/stats-overview'
-import { RemindersWidget } from '@/components/dashboard/reminders-widget'
+// MVP: Stats and Reminders removed
 import { QuickActions } from '@/components/dashboard/quick-actions'
+import { ConversionStats } from '@/components/dashboard/conversion-stats'
 
 // Lazy loading des composants lourds
 const DocumentList = lazy(() => import('@/components/document/document-list').then(mod => ({ default: mod.DocumentList })))
@@ -92,26 +92,16 @@ export default function DashboardPage() {
                 </p>
               </div>
 
-              {/* Stats Overview */}
-              <div className="animate-slide-up">
-                <StatsOverview />
-              </div>
-
-              {/* Main Dashboard Grid */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
-                {/* Quick Actions */}
-                <div className="xl:col-span-2 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                  <QuickActions 
-                    onUploadClick={() => setShowUpload(true)}
-                    onSearchClick={() => setShowDocuments(true)}
-                    onViewAllClick={() => setShowDocuments(true)}
-                  />
-                </div>
-
-                {/* Reminders Widget */}
-                <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                  <RemindersWidget onViewAll={() => setShowDocuments(true)} />
-                </div>
+              {/* Quick Actions - MVP Simplified */}
+              <div className="animate-slide-up space-y-6">
+                <QuickActions 
+                  onUploadClick={() => setShowUpload(true)}
+                  onSearchClick={() => setShowDocuments(true)}
+                  onViewAllClick={() => setShowDocuments(true)}
+                />
+                
+                {/* Conversion Stats */}
+                <ConversionStats />
               </div>
             </div>
           )}

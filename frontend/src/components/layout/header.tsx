@@ -71,7 +71,7 @@ export function Header() {
       
       if (bodyText.includes(searchText)) {
         // Highlight le texte trouvé
-        window.find(searchQuery, false, false, true, false, true, false)
+(window as any).find(searchQuery, false, false, true, false, true, false)
       }
     }
   }

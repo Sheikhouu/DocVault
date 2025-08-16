@@ -5,11 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
 import { DocumentPreview } from './document-preview'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { Download, FileText, AlertCircle, Clock, CheckCircle } from 'lucide-react'
+import { webhooksAPI } from '@/services/api'
 
 type Document = Database['public']['Tables']['documents']['Row']
 
@@ -47,10 +49,7 @@ export function DocumentList({ searchQuery = '', selectedCategory = '' }: Docume
   const [previewOpen, setPreviewOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClient()
 
   const fetchDocuments = async () => {
     try {
@@ -141,15 +140,61 @@ export function DocumentList({ searchQuery = '', selectedCategory = '' }: Docume
     setPreviewOpen(true)
   }
 
-  const isExpiringSoon = (expiryDate: string | null) => {
-    if (!expiryDate) return false
-    const expiry = new Date(expiryDate)
-    const thirtyDaysFromNow = new Date()
-    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
-    return expiry <= thirtyDaysFromNow
+  const getConversionStatusBadge = (status: string | null) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="secondary" className="gap-1"><Clock className="h-3 w-3" />En attente</Badge>
+      case 'converting':
+        return <Badge variant="default" className="gap-1"><Clock className="h-3 w-3 animate-spin" />Conversion...</Badge>
+      case 'completed':
+        return <Badge variant="outline" className="gap-1 text-green-600 border-green-600"><CheckCircle className="h-3 w-3" />Terminé</Badge>
+      case 'failed':
+        return <Badge variant="destructive" className="gap-1"><AlertCircle className="h-3 w-3" />Échec</Badge>
+      default:
+        return <Badge variant="secondary">Inconnu</Badge>
+    }
   }
 
-  const isExpired = (expiryDate: string | null) => {
+  const downloadPdf = async (document: Document) => {
+    if (!document.converted_pdf_url) return
+    
+    try {
+      const { data } = supabase.storage
+        .from('documents')
+        .getPublicUrl(document.converted_pdf_url)
+      
+      window.open(data.publicUrl, '_blank')
+    } catch (error) {
+      console.error('Erreur lors du téléchargement PDF:', error)
+    }
+  }
+
+  const retryConversion = async (documentId: string) => {
+    try {
+      // Mettre à jour le statut local immédiatement
+      setDocuments(prev => prev.map(doc => 
+        doc.id === documentId 
+          ? { ...doc, conversion_status: 'pending' as const, conversion_error: null }
+          : doc
+      ))
+      
+      await webhooksAPI.retryConversion(documentId)
+      
+      // Recharger les documents après un délai pour voir le nouveau statut
+      setTimeout(fetchDocuments, 2000)
+    } catch (error) {
+      console.error('Erreur lors de la relance de conversion:', error)
+      // Remettre le statut en failed en cas d'erreur
+      setDocuments(prev => prev.map(doc => 
+        doc.id === documentId 
+          ? { ...doc, conversion_status: 'failed' as const }
+          : doc
+      ))
+      setError('Impossible de relancer la conversion')
+    }
+  }
+
+  const placeholder = (expiryDate: string | null) => {
     if (!expiryDate) return false
     const expiry = new Date(expiryDate)
     const today = new Date()
@@ -238,20 +283,10 @@ export function DocumentList({ searchQuery = '', selectedCategory = '' }: Docume
                   </div>
                 </div>
                 
-                {/* Expiry Status */}
-                {document.expiry_date && (
-                  <div className="flex-shrink-0">
-                    {isExpired(document.expiry_date) ? (
-                      <Badge variant="destructive" className="text-xs">
-                        Expiré
-                      </Badge>
-                    ) : isExpiringSoon(document.expiry_date) ? (
-                      <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
-                        Expire bientôt
-                      </Badge>
-                    ) : null}
-                  </div>
-                )}
+                {/* Conversion Status */}
+                <div className="flex-shrink-0">
+                  {getConversionStatusBadge(document.conversion_status)}
+                </div>
               </div>
             </CardHeader>
             
@@ -298,12 +333,43 @@ export function DocumentList({ searchQuery = '', selectedCategory = '' }: Docume
                 </span>
               </div>
               
-              {/* Expiry Date */}
-              {document.expiry_date && (
-                <div className="text-xs text-gray-500 mt-1">
-                  Expire le {new Date(document.expiry_date).toLocaleDateString('fr-FR')}
-                </div>
-              )}
+              {/* PDF Actions */}
+              <div className="mt-3 flex gap-2">
+                {document.conversion_status === 'completed' && document.converted_pdf_url && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 px-2 text-xs"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      downloadPdf(document)
+                    }}
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    PDF
+                  </Button>
+                )}
+                {document.conversion_status === 'failed' && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 px-2 text-xs text-orange-600 border-orange-300"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      retryConversion(document.id)
+                    }}
+                  >
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Réessayer
+                  </Button>
+                )}
+                {document.conversion_status === 'converting' && (
+                  <div className="flex items-center gap-1 text-xs text-blue-600">
+                    <Clock className="h-3 w-3 animate-spin" />
+                    Conversion en cours...
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         ))}

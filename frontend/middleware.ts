@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Vérifier si l'utilisateur est authentifié côté client
+  // MVP: Simplified middleware with cookie support
   const token = request.cookies.get('auth_token')?.value;
   
   const { pathname } = request.nextUrl;
@@ -20,8 +20,7 @@ export function middleware(request: NextRequest) {
   const protectedRoutes = [
     '/dashboard',
     '/documents',
-    '/settings',
-    '/share'
+    '/settings'
   ];
 
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route));

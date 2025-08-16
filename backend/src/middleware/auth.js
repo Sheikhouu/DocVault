@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
 
 const authMiddleware = async (req, res, next) => {
@@ -9,17 +8,14 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ error: 'No token provided' });
     }
 
-    // Verify JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Verify user exists in Supabase using the access token
+    const { data, error } = await supabase.auth.getUser(token);
     
-    // Verify user exists in Supabase
-    const { data: user, error } = await supabase.auth.getUser(token);
-    
-    if (error || !user) {
+    if (error || !data.user) {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
-    req.user = user.user;
+    req.user = data.user;
     next();
   } catch (error) {
     console.error('Auth middleware error:', error);

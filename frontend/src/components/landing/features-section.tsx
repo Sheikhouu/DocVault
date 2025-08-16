@@ -14,10 +14,10 @@ const features = [
     color: 'success'
   },
   {
-    icon: '⏰',
-    title: 'Rappels Intelligents',
-    description: 'Ne manquez plus jamais une échéance. Notifications push, email et SMS personnalisables.',
-    benefits: ['Notifications multi-canaux', 'Rappels personnalisés', 'Calendrier intégré'],
+    icon: '📄',
+    title: 'Conversion PDF',
+    description: 'Convertissez automatiquement tous vos documents en PDF pour un accès universel.',
+    benefits: ['Conversion automatique', 'Formats multiples supportés', 'PDF optimisé'],
     color: 'primary'
   },
   {
@@ -37,7 +37,7 @@ const features = [
   {
     icon: '📊',
     title: 'Tableau de Bord',
-    description: 'Vue d\'ensemble complète de vos documents, rappels et statistiques d\'utilisation.',
+    description: 'Vue d\'ensemble complète de vos documents, conversions et statistiques d\'utilisation.',
     benefits: ['Analytics détaillés', 'Vue d\'ensemble', 'Rapports personnalisés'],
     color: 'secondary'
   },

@@ -111,31 +111,35 @@ cd DocVault
 cd backend
 npm install
 cp .env.example .env
-# Configurer les variables d'environnement (je fournis)
+# IMPORTANT : Demander les vraies variables d'environnement à Sheikhouu
 npm run dev  # Port 8000
 
 # 3. Setup Frontend  
 cd ../frontend
 npm install
 cp .env.example .env.local
-# Configurer les variables d'environnement (je fournis)
+# IMPORTANT : Demander les vraies variables d'environnement à Sheikhouu
 npm run dev  # Port 3000
 
 # 4. Branches Git
 git checkout -b feature/votre-branche
 ```
 
-## ⚙️ **Configuration Environnement**
+## ⚠️ **SÉCURITÉ - Variables d'Environnement**
+
+**ATTENTION** : Les variables d'environnement avec les clés API ne sont **PAS** dans le repository public pour des raisons de sécurité.
+
+**Demandez à Sheikhouu** les vraies valeurs pour :
 
 ### **Backend (.env)**
 ```env
-SUPABASE_URL=https://hhisfodgukzqefsamfgf.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoaXNmb2RndWt6cWVmc2FtZmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1ODg4MTksImV4cCI6MjA2OTE2NDgxOX0.Z8dqwCFtTt1IK-7uXkS2ciqEkBoT7hulTYW81vGCyw0
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoaXNmb2RndWt6cWVmc2FtZmdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzU4ODgxOSwiZXhwIjoyMDY5MTY0ODE5fQ.GmdlVsBniLRcv5-sPYMgJ6yOmTAAfQqcX8GnePaISBw
+SUPABASE_URL=https://[À_FOURNIR_PAR_SHEIKHOUU]
+SUPABASE_ANON_KEY=[À_FOURNIR_PAR_SHEIKHOUU]
+SUPABASE_SERVICE_ROLE_KEY=[À_FOURNIR_PAR_SHEIKHOUU]
 PORT=8000
 NODE_ENV=development
-JWT_SECRET=sb_secret_jHKOSYLwKNqu0K4QKWeHSw_175p0VB2
-ENCRYPTION_KEY=fsQIqhlQmYWBUzKNl6hswe1xmx3KqOAFncl4lDkSEfHWQSxKci50/Nw8Ex5hI0roP4pFXccMPT+O4mcUjIk1Wg==
+JWT_SECRET=[À_FOURNIR_PAR_SHEIKHOUU]
+ENCRYPTION_KEY=[À_FOURNIR_PAR_SHEIKHOUU]
 FRONTEND_URL=http://localhost:3000
 ```
 
@@ -143,7 +147,7 @@ FRONTEND_URL=http://localhost:3000
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000/api
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXTAUTH_SECRET=sb_secret_jHKOSYLwKNqu0K4QKWeHSw_175p0VB2
+NEXTAUTH_SECRET=[À_FOURNIR_PAR_SHEIKHOUU]
 ```
 
 ## 📅 **Planning de Coordination**
@@ -151,7 +155,7 @@ NEXTAUTH_SECRET=sb_secret_jHKOSYLwKNqu0K4QKWeHSw_175p0VB2
 ### **Semaine 1**
 **Lundi 9h** : Kick-off meeting (30 min)
 - Présentation du plan
-- Setup environnements
+- Setup environnements avec les vraies clés
 - Questions/réponses
 
 **Mardi-Vendredi 9h** : Daily standup (15 min)
@@ -211,6 +215,7 @@ NEXTAUTH_SECRET=sb_secret_jHKOSYLwKNqu0K4QKWeHSw_175p0VB2
 - Valider les intégrations
 - Maintenir la cohérence architecturale
 - Coordonner les releases
+- **FOURNIR les variables d'environnement sécurisées**
 
 ---
 
@@ -218,7 +223,7 @@ NEXTAUTH_SECRET=sb_secret_jHKOSYLwKNqu0K4QKWeHSw_175p0VB2
 
 - [ ] **Documentation** distribuée aux développeurs
 - [ ] **Branches Git** créées et poussées
-- [ ] **Environnements** configurés pour tous
+- [ ] **Variables d'environnement** fournies séparément (sécurisé)
 - [ ] **Première réunion** planifiée
 - [ ] **Channels de communication** mis en place
 - [ ] **Objectifs** clairement définis

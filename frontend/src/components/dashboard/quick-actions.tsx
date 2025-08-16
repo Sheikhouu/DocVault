@@ -66,10 +66,10 @@ export function QuickActions({
       description: 'Documents ajoutés récemment'
     },
     {
-      id: 'expiring',
-      title: 'Expire Bientôt',
-      icon: Zap,
-      description: 'Documents à renouveler'
+      id: 'conversions',
+      title: 'Conversions PDF',
+      icon: Download,
+      description: 'Statut des conversions'
     },
     {
       id: 'categories',

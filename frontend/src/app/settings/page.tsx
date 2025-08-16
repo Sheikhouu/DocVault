@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { 
   User,
   Shield,
-  Bell,
   CreditCard,
   Download,
   Trash2,
@@ -19,7 +18,7 @@ import { Sidebar } from '@/components/layout/sidebar'
 import { DashboardHeader } from '@/components/layout/dashboard-header'
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'billing'>('profile')
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'billing'>('profile')
   const [isEditing, setIsEditing] = useState(false)
   const [profileData, setProfileData] = useState({
     fullName: 'François Pierre',
@@ -76,16 +75,6 @@ export default function SettingsPage() {
                 Sécurité
               </Button>
               
-              <Button 
-                variant={activeTab === 'notifications' ? 'default' : 'ghost'}
-                className={`w-full justify-start ${
-                  activeTab === 'notifications' ? 'bg-gray-700 text-white' : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                }`}
-                onClick={() => setActiveTab('notifications')}
-              >
-                <Bell className="w-4 h-4 mr-3" />
-                Notifications
-              </Button>
               
               <Button 
                 variant={activeTab === 'billing' ? 'default' : 'ghost'}
@@ -241,48 +230,6 @@ export default function SettingsPage() {
               </div>
             )}
 
-            {activeTab === 'notifications' && (
-              <div className="max-w-2xl">
-                <h1 className="text-2xl font-semibold mb-6">Notifications</h1>
-                
-                <div className="space-y-6">
-                  <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <h3 className="text-lg font-medium mb-4">Préférences de notifications</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">Rappels de renouvellement</h4>
-                          <p className="text-sm text-gray-400">Recevoir des alertes pour les documents qui expirent</p>
-                        </div>
-                        <Button variant="outline" size="sm" className="border-gray-600 text-white hover:bg-gray-700">
-                          Activé
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">Notifications par email</h4>
-                          <p className="text-sm text-gray-400">Recevoir les notifications par email</p>
-                        </div>
-                        <Button variant="outline" size="sm" className="border-gray-600 text-white hover:bg-gray-700">
-                          Activé
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">Notifications push</h4>
-                          <p className="text-sm text-gray-400">Recevoir les notifications sur votre appareil</p>
-                        </div>
-                        <Button variant="outline" size="sm" className="border-gray-600 text-white hover:bg-gray-700">
-                          Activé
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {activeTab === 'billing' && (
               <div className="max-w-2xl">

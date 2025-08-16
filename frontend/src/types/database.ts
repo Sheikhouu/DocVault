@@ -45,9 +45,12 @@ export interface Database {
           file_path: string | null
           file_size: number | null
           mime_type: string | null
-          expiry_date: string | null
           tags: string[] | null
           is_encrypted: boolean | null
+          converted_pdf_url: string | null
+          conversion_status: 'pending' | 'converting' | 'completed' | 'failed' | null
+          conversion_error: string | null
+          converted_at: string | null
           created_at: string | null
           updated_at: string | null
         }
@@ -60,9 +63,12 @@ export interface Database {
           file_path?: string | null
           file_size?: number | null
           mime_type?: string | null
-          expiry_date?: string | null
           tags?: string[] | null
           is_encrypted?: boolean | null
+          converted_pdf_url?: string | null
+          conversion_status?: 'pending' | 'converting' | 'completed' | 'failed' | null
+          conversion_error?: string | null
+          converted_at?: string | null
           created_at?: string | null
           updated_at?: string | null
         }
@@ -75,9 +81,12 @@ export interface Database {
           file_path?: string | null
           file_size?: number | null
           mime_type?: string | null
-          expiry_date?: string | null
           tags?: string[] | null
           is_encrypted?: boolean | null
+          converted_pdf_url?: string | null
+          conversion_status?: 'pending' | 'converting' | 'completed' | 'failed' | null
+          conversion_error?: string | null
+          converted_at?: string | null
           created_at?: string | null
           updated_at?: string | null
         }

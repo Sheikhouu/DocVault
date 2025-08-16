@@ -43,9 +43,11 @@ export const signOut = async (): Promise<void> => {
     await authAPI.signOut();
   } catch (error) {
     console.error('Sign out error:', error);
+  } finally {
+    // MVP: Always clean up even if server call fails
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
+    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    window.location.href = '/signin';
   }
-  
-  localStorage.removeItem('auth_token');
-  localStorage.removeItem('user');
-  window.location.href = '/signin';
 };

@@ -16,8 +16,8 @@ export type DocumentCategory =
   | 'other'
 
 export interface DocumentWithMetadata extends Document {
-  isExpiringSoon?: boolean
-  daysUntilExpiry?: number
+  convertedPdfUrl?: string
+  conversionStatus?: 'pending' | 'converting' | 'completed' | 'failed'
 }
 
 export interface AuthError {
@@ -33,5 +33,5 @@ export interface SubscriptionLimits {
   maxDocuments: number
   maxStorageSize: number // en bytes
   canShare: boolean
-  canSetReminders: boolean
+  canConvertToPdf: boolean
 } 

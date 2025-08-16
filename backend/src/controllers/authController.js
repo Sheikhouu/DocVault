@@ -69,15 +69,9 @@ class AuthController {
 
   async signOut(req) {
     try {
-      const token = req.header('Authorization')?.replace('Bearer ', '');
-      
-      if (token) {
-        const { error } = await supabase.auth.signOut(token);
-        if (error) {
-          console.error('Supabase signout error:', error);
-        }
-      }
-
+      // MVP: Server-side signOut not possible with service role
+      // Token invalidation is handled client-side
+      // Just return success for MVP
       return { message: 'Successfully signed out' };
     } catch (error) {
       console.error('SignOut error:', error);

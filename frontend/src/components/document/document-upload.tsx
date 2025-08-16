@@ -8,9 +8,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { documentSchema, fileUploadSchema, documentCategories } from '@/lib/validations/document'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
-import { ClientEncryption } from '@/lib/utils/encryption'
+import { DocumentEncryption } from '@/lib/utils/encryption'
 import { useFreemium } from '@/lib/hooks/use-freemium'
 import { z } from 'zod'
 import { AlertTriangle, Shield, Crown } from 'lucide-react'
@@ -47,10 +47,7 @@ export function DocumentUpload({ onSuccess }: DocumentUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const freemium = useFreemium()
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClient()
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
@@ -134,8 +131,9 @@ export function DocumentUpload({ onSuccess }: DocumentUploadProps) {
 
       // Chiffrement côté client
       console.log('🔐 Chiffrement du fichier en cours...')
-      const encryptionPassword = ClientEncryption.generateSecurePassword()
-      const encryptionResult = await ClientEncryption.encryptFile(file, encryptionPassword)
+      const encryptionPassword = 'mvp-no-password'
+      const documentEncryption = new DocumentEncryption()
+      const encryptionResult = await documentEncryption.encryptFile(file, encryptionPassword)
       
       setUploadProgress(30)
 

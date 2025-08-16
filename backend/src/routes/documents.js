@@ -99,16 +99,17 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Generate share link
-router.post('/:id/share', async (req, res) => {
+// Get conversion statistics for user
+router.get('/stats/conversions', async (req, res) => {
   try {
-    const { expiresIn } = req.body;
-    const shareToken = await documentController.generateShareLink(req.params.id, req.user.id, expiresIn);
-    res.json({ shareToken });
+    const stats = await documentController.getConversionStats(req.user.id);
+    res.json(stats);
   } catch (error) {
-    console.error('Generate share link error:', error);
-    res.status(500).json({ error: 'Failed to generate share link' });
+    console.error('Get conversion stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch conversion statistics' });
   }
 });
+
+// MVP: Share link functionality removed
 
 module.exports = router;

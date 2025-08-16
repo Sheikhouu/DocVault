@@ -34,7 +34,7 @@ export function LandingPage() {
               </p>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Centralisez, organisez et sécurisez tous vos documents importants avec notre solution cloud intelligente. 
-                Rappels automatiques, partage sécurisé, recherche avancée et synchronisation multi-appareils pour une productivité maximale.
+                Conversion PDF automatique, partage sécurisé, recherche avancée et synchronisation multi-appareils pour une productivité maximale.
               </p>
               <p className="text-base text-muted-foreground/80 max-w-2xl mx-auto">
                 <span className="font-medium text-primary">Sécurité militaire :</span> Chiffrement AES-256 avec clés RSA-4096, 
@@ -166,20 +166,20 @@ export function LandingPage() {
                     </tr>
                     <tr className="border-b border-border/30">
                       <td className="p-4">
-                        <div className="font-medium">Rappels avancés</div>
-                        <div className="text-sm text-muted-foreground">Notifications intelligentes</div>
+                        <div className="font-medium">Conversion PDF</div>
+                        <div className="text-sm text-muted-foreground">Conversion automatique en PDF</div>
                       </td>
                       <td className="text-center p-4">
                         <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center mx-auto">
                           <span className="text-white text-xs">✓</span>
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">SMS + Email</div>
+                        <div className="text-xs text-muted-foreground mt-1">Tous formats</div>
                       </td>
                       <td className="text-center p-4">
                         <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mx-auto">
                           <span className="text-white text-xs">✓</span>
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">Email uniquement</div>
+                        <div className="text-xs text-muted-foreground mt-1">Formats limités</div>
                       </td>
                     </tr>
                     <tr className="border-b border-border/30">

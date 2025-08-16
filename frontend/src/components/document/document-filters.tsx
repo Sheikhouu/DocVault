@@ -149,45 +149,7 @@ export function DocumentFilters({
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Filtres rapides</h3>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // TODO: Implement expiring soon filter
-                    console.log('Filter: Expiring soon')
-                  }}
-                  className="text-orange-600 border-orange-200 hover:bg-orange-50"
-                >
-                  Expire bientôt
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // TODO: Implement expired filter
-                    console.log('Filter: Expired')
-                  }}
-                  className="text-red-600 border-red-200 hover:bg-red-50"
-                >
-                  Expirés
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // TODO: Implement recent filter
-                    console.log('Filter: Recent')
-                  }}
-                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                >
-                  Récents
-                </Button>
-              </div>
-            </div>
+            {/* MVP: Advanced filters removed */}
           </div>
         </div>
       )}

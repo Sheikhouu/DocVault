@@ -30,6 +30,8 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
+    // Nettoie le cookie pour que le middleware ne considère plus l'utilisateur comme connecté
+    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
     router.push('/signin')
   }
 

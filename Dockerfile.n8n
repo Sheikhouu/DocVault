@@ -1,0 +1,76 @@
+# Dockerfile personnalisé pour n8n avec LibreOffice et utilitaires de conversion
+FROM n8nio/n8n:latest
+
+# Passer en mode root pour installer les packages
+USER root
+
+# Mettre à jour le système et installer les dépendances
+RUN apt-get update && apt-get install -y \
+    # LibreOffice suite complète
+    libreoffice \
+    libreoffice-writer \
+    libreoffice-calc \
+    libreoffice-impress \
+    libreoffice-draw \
+    libreoffice-base \
+    # Fonts pour une meilleure compatibilité
+    fonts-liberation \
+    fonts-dejavu \
+    fonts-liberation2 \
+    fonts-noto \
+    # Utilitaires de conversion
+    imagemagick \
+    ghostscript \
+    pandoc \
+    # Outils système
+    curl \
+    wget \
+    unzip \
+    # Bibliothèques pour Python (si nécessaire)
+    python3 \
+    python3-pip \
+    # Nettoyage
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Installer des modules Python pour conversion avancée
+RUN pip3 install --no-cache-dir \
+    python-docx \
+    openpyxl \
+    xlsxwriter \
+    pypdf2 \
+    pillow
+
+# Configuration LibreOffice pour utilisation headless
+RUN mkdir -p /usr/lib/libreoffice/share/config \
+    && echo "export SAL_USE_VCLPLUGIN=svp" >> /etc/environment
+
+# Configuration ImageMagick (autoriser la conversion PDF)
+RUN sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
+
+# Créer les répertoires de travail
+RUN mkdir -p /tmp/n8n/input /tmp/n8n/output /tmp/n8n/processing \
+    && chown -R node:node /tmp/n8n
+
+# Scripts de conversion personnalisés
+COPY scripts/convert-to-pdf.sh /usr/local/bin/convert-to-pdf.sh
+COPY scripts/optimize-pdf.sh /usr/local/bin/optimize-pdf.sh
+
+# Rendre les scripts exécutables
+RUN chmod +x /usr/local/bin/convert-to-pdf.sh /usr/local/bin/optimize-pdf.sh
+
+# Variables d'environnement pour LibreOffice
+ENV SAL_USE_VCLPLUGIN=svp
+ENV SAL_DISABLE_OPENCL=true
+ENV LIBREOFFICE_USER_PROFILE=/tmp/libreoffice_profile
+
+# Revenir à l'utilisateur node
+USER node
+
+# Commande par défaut (héritée de l'image parent n8n)
+CMD ["n8n"]
+
+# Labels pour la documentation
+LABEL maintainer="DocVault Team"
+LABEL description="n8n with LibreOffice and conversion tools for DocVault PDF conversion workflow"
+LABEL version="1.0"

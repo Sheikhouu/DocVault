@@ -32,6 +32,7 @@ api.interceptors.response.use(
       // Token expired or invalid
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
+      document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
       window.location.href = '/signin';
     }
     return Promise.reject(error);
@@ -50,6 +51,9 @@ export const authAPI = {
     if (response.data.session?.access_token) {
       localStorage.setItem('auth_token', response.data.session.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      // MVP: Write cookie for Next.js middleware
+      document.cookie = `auth_token=${response.data.session.access_token}; path=/; max-age=86400; samesite=lax`;
     }
     return response.data;
   },
@@ -58,6 +62,9 @@ export const authAPI = {
     const response = await api.post('/auth/signout');
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user');
+    
+    // MVP: Remove cookie for Next.js middleware
+    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
     return response.data;
   },
 
@@ -103,10 +110,13 @@ export const documentsAPI = {
     return response.data;
   },
 
-  generateShareLink: async (id: string, expiresIn?: string) => {
-    const response = await api.post(`/documents/${id}/share`, { expiresIn });
+  // Conversion statistics
+  getConversionStats: async () => {
+    const response = await api.get('/documents/stats/conversions');
     return response.data;
   },
+
+  // MVP: Share link functionality removed
 };
 
 // Profile API
@@ -121,8 +131,18 @@ export const profileAPI = {
     return response.data;
   },
 
-  getStats: async () => {
-    const response = await api.get('/profiles/stats');
+  // MVP: Stats functionality removed
+};
+
+// Webhooks API
+export const webhooksAPI = {
+  retryConversion: async (documentId: string) => {
+    const response = await api.post(`/webhooks/retry-conversion/${documentId}`);
+    return response.data;
+  },
+
+  getConversionStatus: async (documentId: string) => {
+    const response = await api.get(`/webhooks/conversion-status/${documentId}`);
     return response.data;
   },
 };

@@ -44,6 +44,11 @@ export function SignInForm() {
       }
 
       if (authData.user) {
+        // Écrit un cookie lisible par le middleware Next pour la garde d'accès SSR
+        const accessToken = authData.session?.access_token
+        if (accessToken) {
+          document.cookie = `auth_token=${accessToken}; path=/; max-age=86400; samesite=lax`
+        }
         // Redirection vers le dashboard
         router.push('/dashboard')
         router.refresh()

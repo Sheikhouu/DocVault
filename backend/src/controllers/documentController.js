@@ -1,5 +1,6 @@
 const supabase = require('../config/supabase');
 const crypto = require('crypto');
+const axios = require('axios');
 
 class DocumentController {
   async getDocuments(userId, query = {}) {
@@ -102,9 +103,9 @@ class DocumentController {
           file_path: uploadData.path,
           file_size: file.size,
           mime_type: file.mimetype,
-          expiry_date: expiry_date ? new Date(expiry_date).toISOString() : null,
           tags: tags || [],
-          is_encrypted: true
+          is_encrypted: true,
+          conversion_status: 'pending'
         })
         .select()
         .single();
@@ -114,6 +115,20 @@ class DocumentController {
         await supabase.storage.from('documents').remove([fileName]);
         throw error;
       }
+
+      // Déclencher la conversion PDF via n8n (de manière asynchrone)
+      this.triggerPdfConversion(data, uploadData.path).catch(error => {
+        console.error('Failed to trigger PDF conversion:', error.message);
+        // Mettre à jour le statut en cas d'échec du trigger
+        supabase
+          .from('documents')
+          .update({ 
+            conversion_status: 'failed',
+            conversion_error: 'Failed to trigger conversion: ' + error.message
+          })
+          .eq('id', data.id)
+          .then(() => console.log(`Document ${data.id} marked as conversion failed`));
+      });
 
       return data;
     } catch (error) {
@@ -184,35 +199,77 @@ class DocumentController {
     }
   }
 
-  async generateShareLink(documentId, userId, expiresIn = '24h') {
+  // MVP: Share functionality removed
+
+  /**
+   * Déclenche la conversion PDF via n8n
+   */
+  async triggerPdfConversion(document, filePath) {
+    const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/document-conversion';
+    
     try {
-      // Verify document belongs to user
-      const document = await this.getDocument(documentId, userId);
-      if (!document) {
-        throw new Error('Document not found');
-      }
+      // Construire l'URL publique du fichier
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
 
-      // Generate share token
-      const shareToken = crypto.randomUUID();
-      const expiresAt = new Date();
-      
-      // Parse expiresIn (e.g., "24h", "7d", "1w")
-      const timeMatch = expiresIn.match(/^(\d+)([hdw])$/);
-      if (timeMatch) {
-        const [, amount, unit] = timeMatch;
-        const multiplier = { h: 60 * 60 * 1000, d: 24 * 60 * 60 * 1000, w: 7 * 24 * 60 * 60 * 1000 };
-        expiresAt.setTime(expiresAt.getTime() + (parseInt(amount) * multiplier[unit]));
-      } else {
-        expiresAt.setTime(expiresAt.getTime() + (24 * 60 * 60 * 1000)); // Default 24h
-      }
+      const webhookPayload = {
+        documentId: document.id,
+        fileUrl: publicUrl,
+        fileName: document.title,
+        mimeType: document.mime_type,
+        userId: document.user_id,
+        timestamp: new Date().toISOString(),
+        source: 'docvault-upload'
+      };
 
-      // Store share token in database (you might want to create a shares table)
-      // For now, we'll return the token directly
-      
-      return `${shareToken}-${documentId}-${expiresAt.getTime()}`;
+      console.log(`Triggering PDF conversion for document ${document.id}`);
+
+      const response = await axios.post(N8N_WEBHOOK_URL, webhookPayload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'DocVault-Backend/1.0'
+        },
+        timeout: 10000
+      });
+
+      console.log(`PDF conversion triggered successfully for document ${document.id}`);
+      return response.data;
+
     } catch (error) {
-      console.error('Generate share link error:', error);
-      throw new Error('Failed to generate share link');
+      console.error(`Failed to trigger PDF conversion for document ${document.id}:`, error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtenir les statistiques de conversion pour un utilisateur
+   */
+  async getConversionStats(userId) {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('conversion_status')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      const stats = {
+        total: data.length,
+        pending: data.filter(d => d.conversion_status === 'pending').length,
+        converting: data.filter(d => d.conversion_status === 'converting').length,
+        completed: data.filter(d => d.conversion_status === 'completed').length,
+        failed: data.filter(d => d.conversion_status === 'failed').length
+      };
+
+      stats.success_rate = stats.total > 0 
+        ? Math.round((stats.completed / stats.total) * 100) 
+        : 0;
+
+      return stats;
+    } catch (error) {
+      console.error('Get conversion stats error:', error);
+      throw new Error('Failed to get conversion statistics');
     }
   }
 }
